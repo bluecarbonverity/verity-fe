@@ -25,6 +25,7 @@ const Dashboard = () => {
   const { unsignedContract } = useContract()
   const [fileMetadatas, setFileMetadatas] = useState([])
   const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     const load = async () => {
@@ -61,7 +62,8 @@ const Dashboard = () => {
           <InputLabel>Search project files</InputLabel>
           <OutlinedInput
             sx={{ width: '500px' }}
-            value=""
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             label="Search project files"
             startAdornment={
               <InputAdornment position="start">
@@ -75,6 +77,7 @@ const Dashboard = () => {
       <Grid container spacing={2}>
         {fileMetadatas
           .filter((_, i) => i < page * 8 && i >= (page - 1) * 8)
+          .filter(d => d.fileName.toLowerCase().includes(search))
           .map((d, i) => (
             <Grid
               key={i}
@@ -102,7 +105,6 @@ const Dashboard = () => {
                     textAlign: 'center',
                   }}
                 >
-                  {/* <CropOriginalIcon sx={{ color: '#0066CC', fontSize: '40px' }} /> */}
                   <Typography variant="h6" sx={{ fontWeight: 500, mb: 1, fontSize: 16 }}>
                     {truncate(d.fileName)}
                   </Typography>
