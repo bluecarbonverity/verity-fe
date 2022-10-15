@@ -17,6 +17,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import { useContract } from '../contexts'
 import { requestFile } from '../utils/api'
+import LoadingFileCard from '../components/LoadingFileCard'
 
 const truncate = str => (str.length > 23 ? str.substring(0, 23) + '...' : str)
 
@@ -26,6 +27,7 @@ const Dashboard = () => {
   const [fileMetadatas, setFileMetadatas] = useState([])
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
@@ -39,6 +41,7 @@ const Dashboard = () => {
         return [...acc, { ...curr, cid: files[i] }]
       }, [])
       setFileMetadatas(metadatas)
+      setLoading(false)
     }
     load()
   }, [unsignedContract])
@@ -75,70 +78,66 @@ const Dashboard = () => {
         </FormControl>
       </Paper>
       <Grid container spacing={2}>
-        {fileMetadatas
-          .filter((_, i) => i < page * 8 && i >= (page - 1) * 8)
-          .filter(d => d.fileName.toLowerCase().includes(search))
-          .map((d, i) => (
-            <Grid
-              key={i}
-              item
-              xs={3}
-              onClick={() => navigate(`/files/${d.cid}`)}
-              sx={{ cursor: 'pointer' }}
-            >
-              <Paper sx={{ display: 'flex', flexDirection: 'column' }}>
-                <div style={{ maxHeight: '100px', overflow: 'hidden' }}>
-                  <img
-                    src={`${process.env.REACT_APP_IPFS_GATEWAY_URL}${d.thumbnailURI}`}
-                    alt={`${d.fileName}`}
-                    style={{ width: '100%' }}
-                  />
-                </div>
-                <Box
-                  sx={{
-                    padding: '18px 12px',
-                    flex: 1,
-                    flexDirection: 'column',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    textAlign: 'center',
-                  }}
+        {loading
+          ? [...Array(8).keys()].map(i => <LoadingFileCard i={i} />)
+          : fileMetadatas
+              .filter((_, i) => i < page * 8 && i >= (page - 1) * 8)
+              .filter(d => d.fileName.toLowerCase().includes(search))
+              .map((d, i) => (
+                <Grid
+                  key={i}
+                  item
+                  xs={3}
+                  onClick={() => navigate(`/files/${d.cid}`)}
+                  sx={{ cursor: 'pointer' }}
                 >
-                  <Typography variant="h6" sx={{ fontWeight: 500, mb: 1, fontSize: 16 }}>
-                    {truncate(d.fileName)}
-                  </Typography>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 100, fontSize: 12 }}>
-                    {d.fileDescription}
-                  </Typography>
-                </Box>
-                <Divider />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px',
-                    color: '#6B7280',
-                  }}
-                >
-                  <div></div>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <AccessTimeIcon sx={{ fontSize: '16px' }} />
-                    <Typography sx={{ fontSize: '10px', paddingLeft: '6px' }}>
-                      Uploaded 2 hr ago
-                    </Typography>
-                  </Box>
-                  {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <DownloadIcon />
-                  <Typography sx={{ fontSize: '12px', paddingLeft: '8px' }}>
-                    Committed 2 hr ago
-                  </Typography>
-                </Box> */}
-                </Box>
-              </Paper>
-            </Grid>
-          ))}
+                  <Paper sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ maxHeight: '110px', overflow: 'hidden' }}>
+                      <img
+                        src={`${process.env.REACT_APP_IPFS_GATEWAY_URL}${d.thumbnailURI}`}
+                        alt={`${d.fileName}`}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                    <Box
+                      sx={{
+                        padding: '18px 12px',
+                        flex: 1,
+                        flexDirection: 'column',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <Typography variant="h6" sx={{ fontWeight: 500, mb: 1, fontSize: 16 }}>
+                        {truncate(d.fileName)}
+                      </Typography>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 100, fontSize: 12 }}>
+                        {d.fileDescription}
+                      </Typography>
+                    </Box>
+                    <Divider />
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '12px',
+                        color: '#6B7280',
+                      }}
+                    >
+                      <div></div>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <AccessTimeIcon sx={{ fontSize: '16px' }} />
+                        <Typography sx={{ fontSize: '10px', paddingLeft: '6px' }}>
+                          Uploaded 2 hr ago
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Paper>
+                </Grid>
+              ))}
       </Grid>
       <Pagination
         count={Math.ceil(fileMetadatas.length / 8)}
