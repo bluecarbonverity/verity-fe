@@ -15,9 +15,14 @@ import {
 import { useNavigate } from 'react-router-dom'
 import SearchIcon from '@mui/icons-material/Search'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
 import { useContract } from '../contexts'
 import { requestFile } from '../utils/api'
 import LoadingFileCard from '../components/LoadingFileCard'
+
+TimeAgo.addDefaultLocale(en)
+const timeAgo = new TimeAgo('en-US')
 
 const truncate = str => (str.length > 23 ? str.substring(0, 23) + '...' : str)
 
@@ -34,12 +39,14 @@ const Dashboard = () => {
       if (!unsignedContract) return
       const files = await unsignedContract.getTokenFiles(1)
       const results = await Promise.all(files.map(async cid => await requestFile(cid)))
-      const metadatas = results.reduce((acc, curr, i) => {
-        // filter out errors
-        if (curr === undefined) return acc
-        // add CID to object (for linking)
-        return [...acc, { ...curr, cid: files[i] }]
-      }, [])
+      const metadatas = results
+        .reduce((acc, curr, i) => {
+          // filter out errors
+          if (curr === undefined) return acc
+          // add CID to object (for linking)
+          return [...acc, { ...curr, cid: files[i] }]
+        }, [])
+        .sort((a, b) =>  Number(b.createdAt) - Number(a.createdAt))
       setFileMetadatas(metadatas)
       setLoading(false)
     }
@@ -131,7 +138,8 @@ const Dashboard = () => {
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <AccessTimeIcon sx={{ fontSize: '16px' }} />
                         <Typography sx={{ fontSize: '10px', paddingLeft: '6px' }}>
-                          Uploaded 2 hr ago
+                          {/* TODO: remove this check in production */}
+                          Uploaded {d.createdAt ? timeAgo.format(d.createdAt) : '10 days ago'}
                         </Typography>
                       </Box>
                     </Box>

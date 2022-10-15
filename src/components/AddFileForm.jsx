@@ -4,7 +4,7 @@ import { LoadingButton } from '@mui/lab'
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
 import CheckIcon from '@mui/icons-material/Check'
 import { toastSuccessMessage, toastErrorMessage } from '../utils/toast'
-import { useContract } from '../contexts'
+import { useAccount, useContract } from '../contexts'
 import { uploadFile, uploadJSON } from '../utils/api'
 import { useNavigate } from 'react-router-dom'
 
@@ -25,6 +25,7 @@ const AddFileForm = () => {
   const [thumbnail, setThumbnail] = useState('')
   const [fileName, setFileName] = useState('')
   const [fileDescription, setFileDescription] = useState('')
+  const account = useAccount()
 
   useEffect(() => {
     setFileName(file.name)
@@ -47,6 +48,8 @@ const AddFileForm = () => {
         thumbnailURI,
         fileName,
         fileDescription,
+        createdBy: account,
+        createdAt: Date.now(),
       }
       const metadataURI = await uploadJSON(fileJSON)
 
@@ -115,7 +118,7 @@ const AddFileForm = () => {
       </FormControl>
       <LoadingButton
         loading={progressState !== 0}
-        loadingPosition={"start"}
+        loadingPosition={'start'}
         variant="contained"
         size="large"
         sx={{ textTransform: 'none', width: '500px', mb: 3 }}
