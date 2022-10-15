@@ -59,6 +59,14 @@ export const getCurrentAccount = async () => {
   return account
 }
 
+export const getUnsignedContract = (address, abi) => {
+  const provider = new ethers.providers.AlchemyProvider(
+    'maticmum',
+    process.env.REACT_APP_ALCHEMY_API_KEY
+  )
+  return new ethers.Contract(address, abi, provider)
+}
+
 export const getSignedContract = (address, abi) => {
   const { ethereum } = window
 

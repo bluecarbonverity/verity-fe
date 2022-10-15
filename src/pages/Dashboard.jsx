@@ -22,16 +22,14 @@ const truncate = str => (str.length > 23 ? str.substring(0, 23) + '...' : str)
 
 const Dashboard = () => {
   const navigate = useNavigate()
-  const contract = useContract()
+  const { unsignedContract } = useContract()
   const [fileMetadatas, setFileMetadatas] = useState([])
   const [page, setPage] = useState(1)
 
   useEffect(() => {
     const load = async () => {
-      if (!contract) {
-        return
-      }
-      const files = await contract.getTokenFiles(1)
+      if (!unsignedContract) return
+      const files = await unsignedContract.getTokenFiles(1)
       const results = await Promise.all(files.map(async cid => await requestFile(cid)))
       const metadatas = results.reduce((acc, curr, i) => {
         // filter out errors
@@ -42,7 +40,7 @@ const Dashboard = () => {
       setFileMetadatas(metadatas)
     }
     load()
-  }, [contract])
+  }, [unsignedContract])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

@@ -19,7 +19,7 @@ const progressStateToButtonText = [
 
 const AddFileForm = () => {
   const navigate = useNavigate()
-  const contract = useContract()
+  const { signedContract } = useContract()
   const [progressState, setProgressState] = useState(0)
   const [file, setFile] = useState('')
   const [thumbnail, setThumbnail] = useState('')
@@ -52,7 +52,7 @@ const AddFileForm = () => {
 
       setProgressState(4)
       // 4) Call addFileToToken method on the smart contract with EthersJS + MetaMask
-      const txn = await contract.addFileToToken(1, metadataURI)
+      const txn = await signedContract.addFileToToken(1, metadataURI)
       toastSuccessMessage('Transaction submitted. Waiting for the transaction to be approved.')
 
       // 5) Wait for next block for file to be visible

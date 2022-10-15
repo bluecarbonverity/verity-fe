@@ -12,6 +12,7 @@ import {
   getEthereumObject,
   setupEthereumEventListeners,
   getSignedContract,
+  getUnsignedContract,
   getCurrentAccount,
 } from './utils/common'
 import verityAbi from './contracts/VerityNFT.json'
@@ -39,22 +40,34 @@ const router = createBrowserRouter(
 
 const App = () => {
   const [account, setAccount] = useState(null)
-  const [contract, setContract] = useState(null)
+  const [contract, setContract] = useState({
+    unsignedContract: null,
+    signedContract: null,
+  })
 
   const load = async () => {
+    const unsignedContract = getUnsignedContract(verityContractAddress, verityAbi)
+
     const ethereum = getEthereumObject()
     if (!ethereum) {
+      setContract({
+        unsignedContract: unsignedContract,
+        signedContract: null,
+      })
       return
     }
 
     setupEthereumEventListeners(ethereum)
 
-    const verityContract = getSignedContract(verityContractAddress, verityAbi)
-    if (!verityContract) return
+    const signedContract = getSignedContract(verityContractAddress, verityAbi)
+    if (!signedContract) return
 
     const currentAccount = await getCurrentAccount()
 
-    setContract(verityContract)
+    setContract({
+      unsignedContract,
+      signedContract,
+    })
     setAccount(currentAccount)
   }
 
