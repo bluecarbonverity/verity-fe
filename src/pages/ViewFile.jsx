@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Typography, Container, Paper, AppBar, Toolbar, Grid, Button } from '@mui/material'
+import {
+  Box,
+  Typography,
+  Container,
+  Paper,
+  AppBar,
+  Toolbar,
+  Grid,
+  Button,
+  Skeleton,
+} from '@mui/material'
 import { useParams, useNavigate } from 'react-router-dom'
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer'
 import logo from '../logo.png'
@@ -13,6 +23,7 @@ const ViewFile = () => {
   const [file, setFile] = useState(null)
   const [project, setProject] = useState(null)
   const { unsignedContract } = useContract()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
@@ -22,6 +33,7 @@ const ViewFile = () => {
       const projectInfo = await requestFile(tokenURI.substring(7, tokenURI.length))
       setFile(metadata)
       setProject(projectInfo)
+      setLoading(false)
     }
     load()
   }, [id, unsignedContract])
@@ -43,37 +55,53 @@ const ViewFile = () => {
         <Container maxWidth="lg" component={Paper} sx={{ flex: 1, padding: '32px 24px' }}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
-              <Typography variant="h5" sx={{ flex: 1, fontWeight: 700 }} mb={3}>
-                {file && file.fileName}
-              </Typography>
-              {file && (
-                <img
-                  style={{ width: '75%' }}
-                  src={`${process.env.REACT_APP_IPFS_GATEWAY_URL}${file.thumbnailURI}`}
-                  alt={`Thumbnail for ${file.fileName}`}
-                />
+              {!loading ? (
+                <Typography variant="h5" sx={{ flex: 1, fontWeight: 700 }} mb={3}>
+                  {file && file.fileName}
+                </Typography>
+              ) : (
+                <Skeleton sx={{ width: '80%', height: '80px' }} animation="wave" />
               )}
-              <Typography variant="body2" sx={{ fontWeight: 400 }}>
-                File uploaded at: {file && new Date(file.createdAt).toLocaleString()}
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 400 }}>
-                Author address:{' '}
-                {file && (
-                  <a
-                    rel="noreferrer"
-                    href={`https://mumbai.polygonscan.com/address/${file.createdBy}`}
-                    target="_blank"
-                  >
-                    {truncate(file.createdBy, 20)}
-                  </a>
-                )}
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 400 }}>
-                IPFS file hash: {file && truncate(id, 20)}
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 400 }} mb={1}>
-                File description: {file && file.fileDescription}
-              </Typography>
+              {!loading ? (
+                <>
+                  {file && (
+                    <img
+                      style={{ width: '75%' }}
+                      src={`${process.env.REACT_APP_IPFS_GATEWAY_URL}${file.thumbnailURI}`}
+                      alt={`Thumbnail for ${file.fileName}`}
+                    />
+                  )}
+                  <Typography variant="body2" sx={{ fontWeight: 400 }}>
+                    File uploaded at: {file && new Date(file.createdAt).toLocaleString()}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 400 }}>
+                    Author address:{' '}
+                    {file && (
+                      <a
+                        rel="noreferrer"
+                        href={`https://mumbai.polygonscan.com/address/${file.createdBy}`}
+                        target="_blank"
+                      >
+                        {truncate(file.createdBy, 20)}
+                      </a>
+                    )}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 400 }}>
+                    IPFS file hash: {file && truncate(id, 20)}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 400 }} mb={1}>
+                    File description: {file && file.fileDescription}
+                  </Typography>
+                </>
+              ) : (
+                <Box mb={2}>
+                  <Skeleton width="75%" height="200px" animation="wave" />
+                  <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
+                  <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
+                  <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
+                  <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
+                </Box>
+              )}
               <Button
                 variant="outlined"
                 sx={{ textTransform: 'none', marginBottom: '16px' }}
@@ -82,34 +110,46 @@ const ViewFile = () => {
               >
                 View file on IPFS
               </Button>
-              {project && (
-                <img
-                  style={{ width: '75%' }}
-                  src={`${process.env.REACT_APP_IPFS_GATEWAY_URL}${project.image.substring(
-                    7,
-                    project.image.length
-                  )}`}
-                  alt={`${project.name}`}
-                />
+              {!loading ? (
+                <>
+                  {project && (
+                    <img
+                      style={{ width: '75%' }}
+                      src={`${process.env.REACT_APP_IPFS_GATEWAY_URL}${project.image.substring(
+                        7,
+                        project.image.length
+                      )}`}
+                      alt={`${project.name}`}
+                    />
+                  )}
+                  <Typography variant="body2" sx={{ fontWeight: 400 }}>
+                    Project name: {project && project.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 400 }}>
+                    Project contract address:{' '}
+                    {file && (
+                      <a
+                        rel="noreferrer"
+                        href={`https://mumbai.polygonscan.com/address/${unsignedContract.address}`}
+                        target="_blank"
+                      >
+                        {truncate(unsignedContract.address, 20)}
+                      </a>
+                    )}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 400 }} mb={1}>
+                    Project description: {project && project.description}
+                  </Typography>
+                </>
+              ) : (
+                <Box mb={2}>
+                  <Skeleton sx={{ width: '75%', height: '200px' }} animation="wave" />
+                  <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
+                  <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
+                  <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
+                  <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
+                </Box>
               )}
-              <Typography variant="body2" sx={{ fontWeight: 400 }}>
-                Project name: {project && project.name}
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 400 }}>
-                Project contract address:{' '}
-                {file && (
-                  <a
-                    rel="noreferrer"
-                    href={`https://mumbai.polygonscan.com/address/${unsignedContract.address}`}
-                    target="_blank"
-                  >
-                    {truncate(unsignedContract.address, 20)}
-                  </a>
-                )}
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 400 }} mb={1}>
-                Project description: {project && project.description}
-              </Typography>
               <Button
                 variant="outlined"
                 sx={{ textTransform: 'none' }}
