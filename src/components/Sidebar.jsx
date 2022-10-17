@@ -51,7 +51,7 @@ const Sidebar = () => {
       <CompanyBox />
       <Divider sx={{ borderColor: '#1F2937' }} />
       <List>
-        {[...Array(3).keys()]
+        {[...Array(4).keys()]
           .map(n => n + 1)
           .map(num => (
             <ListItem key={num} disablePadding onClick={() => navigate(`/projects/${num}`)}>

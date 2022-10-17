@@ -53,10 +53,10 @@ const ViewFile = () => {
                   alt={`Thumbnail for ${file.fileName}`}
                 />
               )}
-              <Typography variant="body2" sx={{ fontWeight: 200 }}>
+              <Typography variant="body2" sx={{ fontWeight: 400 }}>
                 File uploaded at: {file && new Date(file.createdAt).toLocaleString()}
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 200 }}>
+              <Typography variant="body2" sx={{ fontWeight: 400 }}>
                 Author address:{' '}
                 {file && (
                   <a
@@ -68,10 +68,10 @@ const ViewFile = () => {
                   </a>
                 )}
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 200 }}>
+              <Typography variant="body2" sx={{ fontWeight: 400 }}>
                 IPFS file hash: {file && truncate(id, 20)}
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 200 }} mb={1}>
+              <Typography variant="body2" sx={{ fontWeight: 400 }} mb={1}>
                 File description: {file && file.fileDescription}
               </Typography>
               <Button
@@ -92,10 +92,10 @@ const ViewFile = () => {
                   alt={`${project.name}`}
                 />
               )}
-              <Typography variant="body2" sx={{ fontWeight: 200 }}>
+              <Typography variant="body2" sx={{ fontWeight: 400 }}>
                 Project name: {project && project.name}
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 200 }}>
+              <Typography variant="body2" sx={{ fontWeight: 400 }}>
                 Project contract address:{' '}
                 {file && (
                   <a
@@ -107,7 +107,7 @@ const ViewFile = () => {
                   </a>
                 )}
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 200 }} mb={1}>
+              <Typography variant="body2" sx={{ fontWeight: 400 }} mb={1}>
                 Project description: {project && project.description}
               </Typography>
               <Button
