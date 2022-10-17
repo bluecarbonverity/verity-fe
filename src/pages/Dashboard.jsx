@@ -124,15 +124,15 @@ const Dashboard = () => {
                         flexDirection: 'column',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
                         textAlign: 'center',
+                        minHeight: '110px',
                       }}
                     >
                       <Typography variant="h6" sx={{ fontWeight: 500, mb: 1, fontSize: 16 }}>
-                        {truncate(d.fileName, 23)}
+                        {truncate(d.fileName, 18)}
                       </Typography>
                       <Typography variant="subtitle2" sx={{ fontWeight: 100, fontSize: 12 }}>
-                        {d.fileDescription}
+                        {truncate(d.fileDescription, 70)}
                       </Typography>
                     </Box>
                     <Divider />
