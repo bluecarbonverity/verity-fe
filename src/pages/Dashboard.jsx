@@ -19,12 +19,11 @@ import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 import { useContract } from '../contexts'
 import { requestFile } from '../utils/api'
+import { truncate } from '../utils/common'
 import LoadingFileCard from '../components/LoadingFileCard'
 
 TimeAgo.addDefaultLocale(en)
 const timeAgo = new TimeAgo('en-US')
-
-const truncate = str => (str.length > 23 ? str.substring(0, 23) + '...' : str)
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -130,7 +129,7 @@ const Dashboard = () => {
                       }}
                     >
                       <Typography variant="h6" sx={{ fontWeight: 500, mb: 1, fontSize: 16 }}>
-                        {truncate(d.fileName)}
+                        {truncate(d.fileName, 23)}
                       </Typography>
                       <Typography variant="subtitle2" sx={{ fontWeight: 100, fontSize: 12 }}>
                         {d.fileDescription}

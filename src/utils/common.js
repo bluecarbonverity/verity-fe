@@ -75,3 +75,5 @@ export const getSignedContract = (address, abi) => {
   const signer = provider.getSigner()
   return new ethers.Contract(address, abi, signer)
 }
+
+export const truncate = (str, num) => (str.length > num ? str.substring(0, num) + '...' : str)

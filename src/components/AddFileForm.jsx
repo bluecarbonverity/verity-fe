@@ -51,6 +51,7 @@ const AddFileForm = () => {
         fileDescription,
         createdBy: account,
         createdAt: Date.now(),
+        tokenId: id,
       }
       const metadataURI = await uploadJSON(fileJSON)
 
