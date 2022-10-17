@@ -125,7 +125,7 @@ const AddFileForm = () => {
         size="large"
         sx={{ textTransform: 'none', width: '500px', mb: 3 }}
         onClick={() => handleSubmit()}
-        disabled={progressState !== 0}
+        disabled={progressState !== 0 || !file || !fileName || !thumbnail || !fileDescription}
         fullWidth
       >
         {progressStateToButtonText[progressState]}
