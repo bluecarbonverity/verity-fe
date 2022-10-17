@@ -23,7 +23,7 @@ const ViewFile = () => {
       <AppBar color="secondary" dense="true" position="fixed" elevation={1}>
         <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/projects/1')}
             style={{ height: '100%', cursor: 'pointer' }}
             src={logo}
             alt="Blue Carbon Logo"

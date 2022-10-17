@@ -12,7 +12,7 @@ import {
   Divider,
   Pagination,
 } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import SearchIcon from '@mui/icons-material/Search'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import TimeAgo from 'javascript-time-ago'
@@ -28,6 +28,7 @@ const truncate = str => (str.length > 23 ? str.substring(0, 23) + '...' : str)
 
 const Dashboard = () => {
   const navigate = useNavigate()
+  const { id } = useParams()
   const { unsignedContract } = useContract()
   const [fileMetadatas, setFileMetadatas] = useState([])
   const [page, setPage] = useState(1)
@@ -36,8 +37,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     const load = async () => {
+      setLoading(true)
       if (!unsignedContract) return
-      const files = await unsignedContract.getTokenFiles(1)
+      const files = await unsignedContract.getTokenFiles(id)
       const results = await Promise.all(files.map(async cid => await requestFile(cid)))
       const metadatas = results
         .reduce((acc, curr, i) => {
@@ -46,26 +48,36 @@ const Dashboard = () => {
           // add CID to object (for linking)
           return [...acc, { ...curr, cid: files[i] }]
         }, [])
-        .sort((a, b) =>  Number(b.createdAt) - Number(a.createdAt))
+        .sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
       setFileMetadatas(metadatas)
       setLoading(false)
     }
     load()
-  }, [unsignedContract])
+  }, [unsignedContract, id])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Box sx={{ width: '100%', display: 'flex', alignItems: 'space-between', mb: 1 }}>
         <Typography variant="h5" sx={{ flex: 1, fontWeight: 700 }}>
-          Project Dashboard
+          {`Project ${id} Dashboard`}
         </Typography>
-        <Button
-          variant="contained"
-          sx={{ textTransform: 'none' }}
-          onClick={() => navigate('/files/create')}
-        >
-          Add File
-        </Button>
+        <Box>
+          <Button
+            variant="outlined"
+            sx={{ textTransform: 'none', marginRight: '10px' }}
+            target="_blank"
+            href={`https://testnets.opensea.io/assets/mumbai/0x54d8ef369a7733abbb4f482066c6d3456fb93fb7/${id}`}
+          >
+            View on OpenSea
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ textTransform: 'none' }}
+            onClick={() => navigate(`/projects/${id}/files/create`)}
+          >
+            Add File
+          </Button>
+        </Box>
       </Box>
       <Paper sx={{ padding: '12px 12px', width: '100%', mb: 2 }}>
         <FormControl fullWidth>
@@ -86,7 +98,7 @@ const Dashboard = () => {
       </Paper>
       <Grid container spacing={2}>
         {loading
-          ? [...Array(8).keys()].map(i => <LoadingFileCard i={i} />)
+          ? [...Array(8).keys()].map(i => <LoadingFileCard key={i} />)
           : fileMetadatas
               .filter((_, i) => i < page * 8 && i >= (page - 1) * 8)
               .filter(d => d.fileName.toLowerCase().includes(search))

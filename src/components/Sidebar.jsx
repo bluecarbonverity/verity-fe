@@ -9,9 +9,8 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import MailIcon from '@mui/icons-material/Mail'
+import { useNavigate, useParams } from 'react-router-dom'
+import AssignmentIcon from '@mui/icons-material/Assignment'
 import logo from '../logo.png'
 import CompanyBox from './CompanyBox'
 
@@ -19,6 +18,7 @@ const drawerWidth = 300
 
 const Sidebar = () => {
   const navigate = useNavigate()
+  const { id } = useParams()
 
   return (
     <Drawer
@@ -42,31 +42,38 @@ const Sidebar = () => {
           flexDirection: 'row',
           alignItems: 'center',
           padding: '0px 18px',
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/projects/1')}
       >
         <img style={{ width: '100%' }} src={logo} alt="Blue Carbon Logo" />
       </Box>
       <CompanyBox />
       <Divider sx={{ borderColor: '#1F2937' }} />
       <List>
-        {['Dashboard', 'Customers', 'Products', 'Accounts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon
-                sx={{
-                  color: '#D1D5DB',
-                  fontSize: '20px',
-                  minWidth: '32px',
-                }}
-              >
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {[...Array(3).keys()]
+          .map(n => n + 1)
+          .map(num => (
+            <ListItem key={num} disablePadding onClick={() => navigate(`/projects/${num}`)}>
+              <ListItemButton>
+                <ListItemIcon
+                  sx={{
+                    color: num === Number(id) ? '#10B981' : '#D1D5DB',
+                    fontSize: '20px',
+                    minWidth: '32px',
+                  }}
+                >
+                  {<AssignmentIcon />}
+                </ListItemIcon>
+                <ListItemText
+                  sx={{
+                    color: num === Number(id) ? '#10B981' : '#D1D5DB',
+                  }}
+                  primary={`Project ${num}`}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
       </List>
     </Drawer>
   )

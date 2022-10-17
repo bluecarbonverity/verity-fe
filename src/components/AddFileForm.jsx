@@ -6,7 +6,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import { toastSuccessMessage, toastErrorMessage } from '../utils/toast'
 import { useAccount, useContract } from '../contexts'
 import { uploadFile, uploadJSON } from '../utils/api'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const progressStateToButtonText = [
   'Submit',
@@ -19,6 +19,7 @@ const progressStateToButtonText = [
 
 const AddFileForm = () => {
   const navigate = useNavigate()
+  const { id } = useParams()
   const { signedContract } = useContract()
   const [progressState, setProgressState] = useState(0)
   const [file, setFile] = useState('')
@@ -55,7 +56,7 @@ const AddFileForm = () => {
 
       setProgressState(4)
       // 4) Call addFileToToken method on the smart contract with EthersJS + MetaMask
-      const txn = await signedContract.addFileToToken(1, metadataURI)
+      const txn = await signedContract.addFileToToken(id, metadataURI)
       toastSuccessMessage('Transaction submitted. Waiting for the transaction to be approved.')
 
       // 5) Wait for next block for file to be visible
@@ -64,7 +65,7 @@ const AddFileForm = () => {
       toastSuccessMessage('File successfully added to the token.')
 
       // 6) Upload complete => go to Project Dashboard
-      navigate('/')
+      navigate(`/projects/${id}`)
     } catch (err) {
       console.log(err)
       toastErrorMessage(err)

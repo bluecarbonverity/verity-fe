@@ -4,6 +4,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Navigate,
 } from 'react-router-dom'
 import { AccountContext, ContractContext } from './contexts'
 import { ToastContainer } from 'react-toastify'
@@ -29,8 +30,9 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" errorElement={<Error />}>
       <Route element={<MainLayout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="/files/create" element={<AddFile />} />
+        <Route index element={<Navigate to="/projects/1" replace />} />
+        <Route path="/projects/:id" element={<Dashboard />} />
+        <Route path="/projects/:id/files/create" element={<AddFile />} />
       </Route>
       <Route path="/files/:id" element={<ViewFile />} />
       <Route path="/login" element={<Login />} />

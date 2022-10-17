@@ -51,7 +51,7 @@ const Login = () => {
             helperText="Enter a valid email since this is a fully integrated authentication system."
             sx={{ mb: 3 }}
           />
-          <Button variant="contained" size="large" onClick={() => navigate('/')}>
+          <Button variant="contained" size="large" onClick={() => navigate('/projects/1')}>
             Continue
           </Button>
         </Box>

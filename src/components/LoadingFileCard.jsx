@@ -9,8 +9,8 @@ import {
 } from '@mui/material'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 
-const LoadingFileCard = ({ i }) => (
-  <Grid key={i} item xs={3} sx={{ cursor: 'pointer' }}>
+const LoadingFileCard = () => (
+  <Grid item xs={3} sx={{ cursor: 'pointer' }}>
     <Paper sx={{ display: 'flex', flexDirection: 'column' }}>
       <Skeleton
         variant="rectangular"
