@@ -130,6 +130,7 @@ const AddFileForm = () => {
           <MenuItem value={'baseline'}>Baseline</MenuItem>
           <MenuItem value={'degraded'}>Degraded</MenuItem>
           <MenuItem value={'cea'}>CEA</MenuItem>
+          <MenuItem value={'NA'}>N/A</MenuItem>
         </Select>
       </FormControl>
       <LoadingButton
@@ -139,7 +140,9 @@ const AddFileForm = () => {
         size="large"
         sx={{ textTransform: 'none', width: '500px', mb: 3 }}
         onClick={() => handleSubmit()}
-        disabled={progressState !== 0 || !file || !fileName || !thumbnail || !fileDescription || !mrv}
+        disabled={
+          progressState !== 0 || !file || !fileName || !thumbnail || !fileDescription || !mrv
+        }
         fullWidth
       >
         {progressStateToButtonText[progressState]}
