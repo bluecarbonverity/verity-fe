@@ -30,9 +30,9 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" errorElement={<Error />}>
       <Route element={<MainLayout />}>
-        <Route index element={<Navigate to="/projects/1" replace />} />
-        <Route path="/projects/:id" element={<Dashboard />} />
-        <Route path="/projects/:id/files/create" element={<AddFile />} />
+        <Route index element={<Navigate to="/projects/goc-north/koolatong-north" replace />} />
+        <Route path="/projects/:region/:subregion" element={<Dashboard />} />
+        <Route path="/projects/:region/:subregion/files/create" element={<AddFile />} />
       </Route>
       <Route path="/files/:id" element={<ViewFile />} />
       <Route path="/login" element={<Login />} />

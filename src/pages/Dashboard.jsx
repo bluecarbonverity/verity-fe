@@ -11,6 +11,7 @@ import {
   Grid,
   Divider,
   Pagination,
+  ButtonGroup,
 } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import SearchIcon from '@mui/icons-material/Search'
@@ -21,18 +22,28 @@ import { useContract } from '../contexts'
 import { requestFile } from '../utils/api'
 import { truncate } from '../utils/common'
 import LoadingFileCard from '../components/LoadingFileCard'
+import { regions } from '../regions'
 
 TimeAgo.addDefaultLocale(en)
 const timeAgo = new TimeAgo('en-US')
+const activeButtonStyle = {
+  backgroundColor: '#1976d2 !important',
+  color: '#FFFFFF !important',
+  textTransform: 'none',
+}
 
 const Dashboard = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { region, subregion } = useParams()
   const { unsignedContract } = useContract()
   const [fileMetadatas, setFileMetadatas] = useState([])
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  const [mrv, setMrv] = useState('all')
+
+  const { id, name, subregions } = regions.find(d => d.stub === region)
+  const subregionObj = subregions.find(d => d.stub === subregion)
 
   useEffect(() => {
     const load = async () => {
@@ -58,7 +69,7 @@ const Dashboard = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Box sx={{ width: '100%', display: 'flex', alignItems: 'space-between', mb: 1 }}>
         <Typography variant="h5" sx={{ flex: 1, fontWeight: 700 }}>
-          {`Project ${id} Dashboard`}
+          {`${name} | ${subregionObj.name}`}
         </Typography>
         <Box>
           <Button
@@ -72,14 +83,22 @@ const Dashboard = () => {
           <Button
             variant="contained"
             sx={{ textTransform: 'none' }}
-            onClick={() => navigate(`/projects/${id}/files/create`)}
+            onClick={() => navigate(`/projects/${region}/${subregion}/files/create`)}
           >
             Add File
           </Button>
         </Box>
       </Box>
-      <Paper sx={{ padding: '12px 12px', width: '100%', mb: 2 }}>
-        <FormControl fullWidth>
+      <Paper
+        sx={{
+          padding: '12px 12px',
+          width: '100%',
+          mb: 2,
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <FormControl>
           <InputLabel>Search project files</InputLabel>
           <OutlinedInput
             sx={{ width: '500px' }}
@@ -94,11 +113,43 @@ const Dashboard = () => {
             size="small"
           />
         </FormControl>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography variant="h6" sx={{ fontWeight: 400, fontSize: 14, pr: 1 }}>
+            Show MRV:
+          </Typography>
+          <ButtonGroup>
+            <Button
+              onClick={() => setMrv('all')}
+              sx={mrv === 'all' ? activeButtonStyle : { textTransform: 'none' }}
+            >
+              All
+            </Button>
+            <Button
+              onClick={() => setMrv('baseline')}
+              sx={mrv === 'baseline' ? activeButtonStyle : { textTransform: 'none' }}
+            >
+              Baseline
+            </Button>
+            <Button
+              onClick={() => setMrv('degraded')}
+              sx={mrv === 'degraded' ? activeButtonStyle : { textTransform: 'none' }}
+            >
+              Degraded
+            </Button>
+            <Button
+              onClick={() => setMrv('cea')}
+              sx={mrv === 'cea' ? activeButtonStyle : { textTransform: 'none' }}
+            >
+              CEA
+            </Button>
+          </ButtonGroup>
+        </Box>
       </Paper>
       <Grid container spacing={2}>
         {loading
           ? [...Array(8).keys()].map(i => <LoadingFileCard key={i} />)
           : fileMetadatas
+              .filter(d => d.subregion === subregion && (mrv === 'all' || mrv === d.mrv))
               .filter((_, i) => i < page * 8 && i >= (page - 1) * 8)
               .filter(d => d.fileName.toLowerCase().includes(search))
               .map((d, i) => (

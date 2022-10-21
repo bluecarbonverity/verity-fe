@@ -43,7 +43,7 @@ const ViewFile = () => {
       <AppBar color="secondary" dense="true" position="fixed" elevation={1}>
         <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img
-            onClick={() => navigate('/projects/1')}
+            onClick={() => navigate('/projects/goc-north/koolatong-north')}
             style={{ height: '100%', cursor: 'pointer' }}
             src={logo}
             alt="Blue Carbon Logo"
@@ -89,13 +89,17 @@ const ViewFile = () => {
                   <Typography variant="body2" sx={{ fontWeight: 400 }}>
                     IPFS file hash: {file && truncate(id, 20)}
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 400 }} mb={1}>
+                  <Typography variant="body2" sx={{ fontWeight: 400 }}>
                     File description: {file && file.fileDescription}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 400 }} mb={1}>
+                    MRV: {file && file.mrv}
                   </Typography>
                 </>
               ) : (
                 <Box mb={2}>
                   <Skeleton width="75%" height="200px" animation="wave" />
+                  <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
                   <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
                   <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
                   <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />

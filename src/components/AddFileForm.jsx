@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, OutlinedInput, FormControl, InputLabel, FormLabel } from '@mui/material'
+import { Button, OutlinedInput, FormControl, InputLabel, FormLabel, Select, MenuItem } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
 import CheckIcon from '@mui/icons-material/Check'
@@ -7,6 +7,7 @@ import { toastSuccessMessage, toastErrorMessage } from '../utils/toast'
 import { useAccount, useContract } from '../contexts'
 import { uploadFile, uploadJSON } from '../utils/api'
 import { useNavigate, useParams } from 'react-router-dom'
+import { regions } from '../regions'
 
 const progressStateToButtonText = [
   'Submit',
@@ -19,18 +20,21 @@ const progressStateToButtonText = [
 
 const AddFileForm = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { region, subregion } = useParams()
   const { signedContract } = useContract()
   const [progressState, setProgressState] = useState(0)
   const [file, setFile] = useState('')
   const [thumbnail, setThumbnail] = useState('')
   const [fileName, setFileName] = useState('')
   const [fileDescription, setFileDescription] = useState('')
+  const [mrv, setMrv] = useState('')
   const account = useAccount()
 
   useEffect(() => {
     setFileName(file.name)
   }, [file])
+
+  const { id } = regions.find(d => d.stub === region)
 
   const handleSubmit = async () => {
     try {
@@ -52,6 +56,8 @@ const AddFileForm = () => {
         createdBy: account,
         createdAt: Date.now(),
         tokenId: id,
+        subregion: subregion,
+        mrv: mrv,
       }
       const metadataURI = await uploadJSON(fileJSON)
 
@@ -66,7 +72,7 @@ const AddFileForm = () => {
       toastSuccessMessage('File successfully added to the token.')
 
       // 6) Upload complete => go to Project Dashboard
-      navigate(`/projects/${id}`)
+      navigate(`/projects/${region}/${subregion}`)
     } catch (err) {
       console.log(err)
       toastErrorMessage(err)
@@ -118,6 +124,14 @@ const AddFileForm = () => {
           onChange={event => setFileDescription(event.target.value)}
         />
       </FormControl>
+      <FormControl sx={{ mb: 3, width: '500px' }}>
+        <InputLabel>MRV</InputLabel>
+        <Select value={mrv} label="MRV" onChange={event => setMrv(event.target.value)}>
+          <MenuItem value={'baseline'}>Baseline</MenuItem>
+          <MenuItem value={'degraded'}>Degraded</MenuItem>
+          <MenuItem value={'cea'}>CEA</MenuItem>
+        </Select>
+      </FormControl>
       <LoadingButton
         loading={progressState !== 0}
         loadingPosition={'start'}
@@ -125,7 +139,7 @@ const AddFileForm = () => {
         size="large"
         sx={{ textTransform: 'none', width: '500px', mb: 3 }}
         onClick={() => handleSubmit()}
-        disabled={progressState !== 0 || !file || !fileName || !thumbnail || !fileDescription}
+        disabled={progressState !== 0 || !file || !fileName || !thumbnail || !fileDescription || !mrv}
         fullWidth
       >
         {progressStateToButtonText[progressState]}
