@@ -65,6 +65,10 @@ const Dashboard = () => {
     load()
   }, [unsignedContract, id])
 
+  const filteredMetadatas = fileMetadatas
+    .filter(d => d.subregion === subregion && (mrv === 'all' || mrv === d.mrv))
+    .filter(d => d.fileName.toLowerCase().includes(search))
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Box sx={{ width: '100%', display: 'flex', alignItems: 'space-between', mb: 1 }}>
@@ -148,10 +152,8 @@ const Dashboard = () => {
       <Grid container spacing={2}>
         {loading
           ? [...Array(8).keys()].map(i => <LoadingFileCard key={i} />)
-          : fileMetadatas
-              .filter(d => d.subregion === subregion && (mrv === 'all' || mrv === d.mrv))
+          : filteredMetadatas
               .filter((_, i) => i < page * 8 && i >= (page - 1) * 8)
-              .filter(d => d.fileName.toLowerCase().includes(search))
               .map((d, i) => (
                 <Grid
                   key={i}
@@ -210,7 +212,7 @@ const Dashboard = () => {
               ))}
       </Grid>
       <Pagination
-        count={Math.ceil(fileMetadatas.length / 8)}
+        count={Math.ceil(filteredMetadatas.length / 8)}
         color="primary"
         size="large"
         sx={{ margin: '24px 0px' }}
