@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Drawer, Divider, Box } from '@mui/material'
 import { TreeView, TreeItem } from '@mui/lab'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -12,8 +12,12 @@ const drawerWidth = 300
 const Sidebar = () => {
   const navigate = useNavigate()
   const { region, subregion } = useParams()
-  const [expanded, setExpanded] = React.useState([region])
-  const [selected, setSelected] = React.useState(subregion)
+  const [expanded, setExpanded] = useState([region])
+  const [selected, setSelected] = useState(subregion)
+
+  useEffect(() => {
+    setExpanded([region])
+  }, [region])
 
   return (
     <Drawer
