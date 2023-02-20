@@ -10,7 +10,7 @@ const toastConfig: ToastOptions<{}> = {
   progress: undefined,
 }
 
-export const toastSuccessMessage = (message) =>
+export const toastSuccessMessage = (message: string) =>
   toast.success(message, toastConfig)
-export const toastErrorMessage = (message) =>
+export const toastErrorMessage = (message: string) =>
   toast.error(message, toastConfig)

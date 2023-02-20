@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const requestFile = async cid => {
+export const requestFile = async (cid: string) => {
   try {
     const res = await axios(`${process.env.REACT_APP_IPFS_GATEWAY_URL}${cid}`)
 
@@ -13,7 +13,7 @@ export const requestFile = async cid => {
   }
 }
 
-export const uploadFile = async (file, onError?) => {
+export const uploadFile = async (file: File, onError?: Function) => {
   const formData = new FormData()
   formData.append('file', file)
 
@@ -36,7 +36,7 @@ export const uploadFile = async (file, onError?) => {
   }
 }
 
-export const uploadJSON = async (data, onError?) => {
+export const uploadJSON = async (data: any, onError?: Function) => {
   const config = {
     method: 'POST',
     url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',

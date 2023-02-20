@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Button, OutlinedInput, FormControl, InputLabel, FormLabel, Select, MenuItem } from '@mui/material'
+import {
+  Button,
+  OutlinedInput,
+  FormControl,
+  InputLabel,
+  FormLabel,
+  Select,
+  MenuItem,
+} from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
 import CheckIcon from '@mui/icons-material/Check'
@@ -37,6 +45,10 @@ const AddFileForm = () => {
   const { id } = regions.find(d => d.stub === region)
 
   const handleSubmit = async () => {
+    // this shouldn't happen - safety for TypeScript
+    if (typeof file === 'string' || typeof thumbnail === 'string')
+      throw Error('File or thumbnail not parsed.')
+
     try {
       setProgressState(1)
       // 1) POST file to IPFS (save the CID)

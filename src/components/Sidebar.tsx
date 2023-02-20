@@ -13,7 +13,7 @@ const Sidebar = () => {
   const navigate = useNavigate()
   const { region, subregion } = useParams()
   const [expanded, setExpanded] = useState([region])
-  const [selected, setSelected] = useState(subregion)
+  const [selected, setSelected] = useState<string[]>([subregion])
 
   useEffect(() => {
     setExpanded([region])
@@ -56,7 +56,7 @@ const Sidebar = () => {
         onNodeToggle={(e, nodeIds) => {
           setExpanded(nodeIds)
         }}
-        onNodeSelect={(e, nodeIds) => {
+        onNodeSelect={(e: React.SyntheticEvent<Element, Event>, nodeIds: string[]) => {
           setSelected(nodeIds)
         }}
       >

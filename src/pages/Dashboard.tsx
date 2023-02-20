@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Typography,
@@ -23,6 +23,7 @@ import { requestFile } from '../utils/api'
 import { truncate } from '../utils/common'
 import LoadingFileCard from '../components/LoadingFileCard'
 import { regions } from '../regions'
+import { IFile } from '../types/files'
 
 TimeAgo.addDefaultLocale(en)
 const timeAgo = new TimeAgo('en-US')
@@ -49,8 +50,8 @@ const Dashboard = () => {
     const load = async () => {
       setLoading(true)
       if (!unsignedContract) return
-      const files = await unsignedContract.getTokenFiles(id)
-      const results = await Promise.all(files.map(async cid => await requestFile(cid)))
+      const files: Array<string> = await unsignedContract.getTokenFiles(id)
+      const results: Array<IFile> = await Promise.all(files.map(async (cid: string) => await requestFile(cid)))
       const metadatas = results
         .reduce((acc, curr, i) => {
           // filter out errors

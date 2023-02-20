@@ -28,10 +28,10 @@ export const getEthereumObject = () => {
     return null
   }
 
-  return ethereum
+  return ethereum as ethers.providers.ExternalProvider
 }
 
-export const setupEthereumEventListeners = ethereum => {
+export const setupEthereumEventListeners = (ethereum: ethers.providers.ExternalProvider) => {
   const provider = new ethers.providers.Web3Provider(ethereum, 'any')
   provider.on('network', (newNetwork, oldNetwork) => {
     if (oldNetwork) {
@@ -46,7 +46,7 @@ export const setupEthereumEventListeners = ethereum => {
   return ethereum
 }
 
-export const connectWallet = async () => {
+export const connectWallet = async (): Promise<null | void> => {
   const { ethereum } = window
   if (!ethereum) return null
 
@@ -66,7 +66,7 @@ export const getCurrentAccount = async () => {
   return account
 }
 
-export const getUnsignedContract = (address, abi) => {
+export const getUnsignedContract = (address: string, abi: ethers.ContractInterface) => {
   const provider = new ethers.providers.AlchemyProvider(
     'maticmum',
     process.env.REACT_APP_ALCHEMY_API_KEY
@@ -74,7 +74,7 @@ export const getUnsignedContract = (address, abi) => {
   return new ethers.Contract(address, abi, provider)
 }
 
-export const getSignedContract = (address, abi) => {
+export const getSignedContract = (address: string, abi: ethers.ContractInterface) => {
   const { ethereum } = window
 
   const provider = new ethers.providers.Web3Provider(
@@ -86,4 +86,4 @@ export const getSignedContract = (address, abi) => {
   return new ethers.Contract(address, abi, signer)
 }
 
-export const truncate = (str, num) => (str.length > num ? str.substring(0, num) + '...' : str)
+export const truncate = (str: string, num: number) => (str.length > num ? str.substring(0, num) + '...' : str)
