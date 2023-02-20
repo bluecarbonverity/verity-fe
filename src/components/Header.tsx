@@ -1,4 +1,3 @@
-import React from 'react'
 import { AppBar, Toolbar, Box, IconButton, Avatar } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import GroupIcon from '@mui/icons-material/Group'
@@ -9,7 +8,6 @@ const drawerWidth = 300
 
 const Header = () => (
   <AppBar
-    dense="true"
     position="fixed"
     elevation={1}
     sx={{

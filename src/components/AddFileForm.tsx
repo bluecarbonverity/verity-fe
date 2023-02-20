@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Button, OutlinedInput, FormControl, InputLabel, FormLabel, Select, MenuItem } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
@@ -23,15 +23,15 @@ const AddFileForm = () => {
   const { region, subregion } = useParams()
   const { signedContract } = useContract()
   const [progressState, setProgressState] = useState(0)
-  const [file, setFile] = useState('')
-  const [thumbnail, setThumbnail] = useState('')
+  const [file, setFile] = useState<File | string>('')
+  const [thumbnail, setThumbnail] = useState<File | string>('')
   const [fileName, setFileName] = useState('')
   const [fileDescription, setFileDescription] = useState('')
   const [mrv, setMrv] = useState('')
   const account = useAccount()
 
   useEffect(() => {
-    setFileName(file.name)
+    setFileName(typeof file === 'string' ? file : file.name)
   }, [file])
 
   const { id } = regions.find(d => d.stub === region)

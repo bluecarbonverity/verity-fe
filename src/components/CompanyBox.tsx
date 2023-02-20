@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Typography } from '@mui/material'
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 

@@ -13,7 +13,7 @@ export const requestFile = async cid => {
   }
 }
 
-export const uploadFile = async (file, onError) => {
+export const uploadFile = async (file, onError?) => {
   const formData = new FormData()
   formData.append('file', file)
 
@@ -36,7 +36,7 @@ export const uploadFile = async (file, onError) => {
   }
 }
 
-export const uploadJSON = async (data, onError) => {
+export const uploadJSON = async (data, onError?) => {
   const config = {
     method: 'POST',
     url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',

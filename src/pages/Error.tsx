@@ -1,8 +1,13 @@
 import { Box } from '@mui/material'
 import { useRouteError } from 'react-router-dom'
 
+type RouteError = {
+  statusText?: string;
+  message?: string;
+}
+
 export default function ErrorPage() {
-  const error = useRouteError()
+  const error: RouteError | undefined = useRouteError()
 
   return (
     <Box

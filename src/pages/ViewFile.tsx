@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Typography,
@@ -40,7 +40,7 @@ const ViewFile = () => {
 
   return (
     <Box sx={{ height: '100vh', width: '100vw', display: 'flex', backgroundColor: '#F9FAFB' }}>
-      <AppBar color="secondary" dense="true" position="fixed" elevation={1}>
+      <AppBar color="secondary" position="fixed" elevation={1}>
         <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img
             onClick={() => navigate('/projects/goc-north/koolatong-north')}
