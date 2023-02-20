@@ -5,11 +5,11 @@ const theme = createTheme({
   palette: {
     primary: {
       main: '#0066CC',
-      constrastText: '#FFFFFF',
+      // constrastText: '#FFFFFF',
     },
     secondary: {
       main: '#111827',
-      constrastText: '#FFFFFF',
+      // constrastText: '#FFFFFF',
     },
   },
 })

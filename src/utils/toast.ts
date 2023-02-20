@@ -1,6 +1,6 @@
-import { toast } from 'react-toastify'
+import { toast, ToastOptions } from 'react-toastify'
 
-const toastConfig = {
+const toastConfig: ToastOptions<{}> = {
   position: 'bottom-center',
   autoClose: 5000,
   hideProgressBar: false,

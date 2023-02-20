@@ -1,4 +1,11 @@
 import { ethers } from 'ethers'
+import { MetaMaskInpageProvider } from '@metamask/providers'
+
+declare global {
+  interface Window {
+    ethereum?: MetaMaskInpageProvider
+  }
+}
 
 // 1: Mainnet
 // 4: Rinkeby
@@ -50,7 +57,7 @@ export const connectWallet = async () => {
 export const getCurrentAccount = async () => {
   const { ethereum } = window
 
-  const accounts = await ethereum.request({ method: 'eth_accounts' })
+  const accounts: Array<string> = await ethereum.request({ method: 'eth_accounts' })
 
   if (!accounts || accounts?.length === 0) {
     return null
@@ -70,7 +77,10 @@ export const getUnsignedContract = (address, abi) => {
 export const getSignedContract = (address, abi) => {
   const { ethereum } = window
 
-  const provider = new ethers.providers.Web3Provider(ethereum, 'any')
+  const provider = new ethers.providers.Web3Provider(
+    ethereum as ethers.providers.ExternalProvider,
+    'any'
+  )
 
   const signer = provider.getSigner()
   return new ethers.Contract(address, abi, signer)
