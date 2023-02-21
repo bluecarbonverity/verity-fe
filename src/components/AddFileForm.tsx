@@ -87,7 +87,7 @@ const AddFileForm = () => {
       navigate(`/projects/${region}/${subregion}`)
     } catch (err) {
       console.log(err)
-      toastErrorMessage(err)
+      toastErrorMessage(err as string)
     }
   }
 

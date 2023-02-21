@@ -28,7 +28,7 @@ export const getEthereumObject = () => {
     return null
   }
 
-  return ethereum as ethers.providers.ExternalProvider
+  return ethereum as unknown as ethers.providers.ExternalProvider
 }
 
 export const setupEthereumEventListeners = (ethereum: ethers.providers.ExternalProvider) => {
@@ -79,7 +79,7 @@ export const getSignedContract = (address: string, abi: ethers.ContractInterface
   const { ethereum } = window
 
   const provider = new ethers.providers.Web3Provider(
-    ethereum as ethers.providers.ExternalProvider,
+    ethereum as unknown as ethers.providers.ExternalProvider,
     'any'
   )
 
