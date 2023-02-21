@@ -42,12 +42,12 @@ const AddFileForm = () => {
     setFileName(typeof file === 'string' ? file : file.name)
   }, [file])
 
-  const { id } = regions.find(d => d.stub === region)
+  const { id } = regions.find(d => d.stub === region) || {}
 
   const handleSubmit = async () => {
     // this shouldn't happen - safety for TypeScript
     if (typeof file === 'string' || typeof thumbnail === 'string')
-      throw Error('File or thumbnail not parsed.')
+      throw new Error('File or thumbnail not parsed.')
 
     try {
       setProgressState(1)
@@ -75,7 +75,7 @@ const AddFileForm = () => {
 
       setProgressState(4)
       // 4) Call addFileToToken method on the smart contract with EthersJS + MetaMask
-      const txn = await signedContract.addFileToToken(id, metadataURI)
+      const txn = await signedContract!.addFileToToken(id, metadataURI)
       toastSuccessMessage('Transaction submitted. Waiting for the transaction to be approved.')
 
       // 5) Wait for next block for file to be visible
@@ -102,7 +102,7 @@ const AddFileForm = () => {
         endIcon={file && <CheckIcon />}
       >
         Upload File
-        <input type="file" name="file" hidden onChange={e => setFile(e.target.files[0])} />
+        <input type="file" name="file" hidden onChange={e => setFile(e.target.files![0])} />
       </Button>
       <FormControl fullWidth sx={{ mb: 3 }}>
         <Button
@@ -114,7 +114,7 @@ const AddFileForm = () => {
           endIcon={thumbnail && <CheckIcon />}
         >
           Upload Thumbnail
-          <input onChange={e => setThumbnail(e.target.files[0])} type="file" hidden />
+          <input onChange={e => setThumbnail(e.target.files![0])} type="file" hidden />
         </Button>
         <FormLabel>* Miniumum resolution: 240px</FormLabel>
       </FormControl>

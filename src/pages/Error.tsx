@@ -7,7 +7,7 @@ type RouteError = {
 }
 
 export default function ErrorPage() {
-  const error: RouteError | undefined = useRouteError()
+  const error: RouteError = useRouteError() || {}
 
   return (
     <Box

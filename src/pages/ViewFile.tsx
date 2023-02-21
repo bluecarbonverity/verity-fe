@@ -16,19 +16,20 @@ import logo from '../logo.png'
 import { requestFile } from '../utils/api'
 import { truncate } from '../utils/common'
 import { useContract } from '../contexts'
+import { IFile, IProject } from 'types/files'
 
 const ViewFile = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [file, setFile] = useState(null)
-  const [project, setProject] = useState(null)
+  const [file, setFile] = useState<IFile | null>(null)
+  const [project, setProject] = useState<IProject | null>(null)
   const { unsignedContract } = useContract()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
       if (!unsignedContract) return
-      const metadata = await requestFile(id)
+      const metadata = await requestFile(id!)
       const tokenURI = await unsignedContract.tokenURI(metadata.tokenId)
       const projectInfo = await requestFile(tokenURI.substring(7, tokenURI.length))
       setFile(metadata)
@@ -87,7 +88,7 @@ const ViewFile = () => {
                     )}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 400 }}>
-                    IPFS file hash: {file && truncate(id, 20)}
+                    IPFS file hash: {file && truncate(id!, 20)}
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 400 }}>
                     File description: {file && file.fileDescription}
@@ -106,14 +107,16 @@ const ViewFile = () => {
                   <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
                 </Box>
               )}
-              <Button
-                variant="outlined"
-                sx={{ textTransform: 'none', marginBottom: '16px' }}
-                target="_blank"
-                href={file && `${process.env.REACT_APP_IPFS_GATEWAY_URL}${file.fileURI}`}
-              >
-                View file on IPFS
-              </Button>
+              {file && (
+                <Button
+                  variant="outlined"
+                  sx={{ textTransform: 'none', marginBottom: '16px' }}
+                  target="_blank"
+                  href={`${process.env.REACT_APP_IPFS_GATEWAY_URL}${file.fileURI}`}
+                >
+                  View file on IPFS
+                </Button>
+              )}
               {!loading ? (
                 <>
                   {project && (
@@ -129,18 +132,20 @@ const ViewFile = () => {
                   <Typography variant="body2" sx={{ fontWeight: 400 }}>
                     Project name: {project && project.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 400 }}>
-                    Project contract address:{' '}
-                    {file && (
-                      <a
-                        rel="noreferrer"
-                        href={`https://mumbai.polygonscan.com/address/${unsignedContract.address}`}
-                        target="_blank"
-                      >
-                        {truncate(unsignedContract.address, 20)}
-                      </a>
-                    )}
-                  </Typography>
+                  {unsignedContract && (
+                    <Typography variant="body2" sx={{ fontWeight: 400 }}>
+                      Project contract address:{' '}
+                      {file && (
+                        <a
+                          rel="noreferrer"
+                          href={`https://mumbai.polygonscan.com/address/${unsignedContract.address}`}
+                          target="_blank"
+                        >
+                          {truncate(unsignedContract.address, 20)}
+                        </a>
+                      )}
+                    </Typography>
+                  )}
                   <Typography variant="body2" sx={{ fontWeight: 400 }} mb={1}>
                     Project description: {project && project.description}
                   </Typography>
@@ -154,17 +159,16 @@ const ViewFile = () => {
                   <Skeleton sx={{ width: '65%', height: '40px' }} animation="wave" />
                 </Box>
               )}
-              <Button
-                variant="outlined"
-                sx={{ textTransform: 'none' }}
-                target="_blank"
-                href={
-                  file &&
-                  `https://testnets.opensea.io/assets/mumbai/0x54d8ef369a7733abbb4f482066c6d3456fb93fb7/${file.tokenId}`
-                }
-              >
-                View project on OpenSea
-              </Button>
+              {file && (
+                <Button
+                  variant="outlined"
+                  sx={{ textTransform: 'none' }}
+                  target="_blank"
+                  href={`https://testnets.opensea.io/assets/mumbai/0x54d8ef369a7733abbb4f482066c6d3456fb93fb7/${file.tokenId}`}
+                >
+                  View project on OpenSea
+                </Button>
+              )}
             </Grid>
             <Grid item xs={12} md={8}>
               {file && (

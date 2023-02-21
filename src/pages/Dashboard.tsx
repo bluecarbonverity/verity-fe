@@ -23,7 +23,7 @@ import { requestFile } from '../utils/api'
 import { truncate } from '../utils/common'
 import LoadingFileCard from '../components/LoadingFileCard'
 import { regions } from '../regions'
-import { IFile } from '../types/files'
+import { IFile, IFileMetadata } from '../types/files'
 
 TimeAgo.addDefaultLocale(en)
 const timeAgo = new TimeAgo('en-US')
@@ -37,13 +37,13 @@ const Dashboard = () => {
   const navigate = useNavigate()
   const { region, subregion } = useParams()
   const { unsignedContract } = useContract()
-  const [fileMetadatas, setFileMetadatas] = useState([])
+  const [fileMetadatas, setFileMetadatas] = useState<IFileMetadata[]>([])
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [mrv, setMrv] = useState('all')
 
-  const { id, name, subregions } = regions.find(d => d.stub === region)
+  const { id, name, subregions } = regions!.find!(d => d.stub === region)!
   const subregionObj = subregions.find(d => d.stub === subregion)
 
   useEffect(() => {
@@ -51,8 +51,10 @@ const Dashboard = () => {
       setLoading(true)
       if (!unsignedContract) return
       const files: Array<string> = await unsignedContract.getTokenFiles(id)
-      const results: Array<IFile> = await Promise.all(files.map(async (cid: string) => await requestFile(cid)))
-      const metadatas = results
+      const results: Array<IFile> = await Promise.all(
+        files.map(async (cid: string) => await requestFile(cid))
+      )
+      const metadatas: Array<IFileMetadata> = results
         .reduce((acc, curr, i) => {
           // filter out errors
           if (curr === undefined) return acc
@@ -74,7 +76,7 @@ const Dashboard = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Box sx={{ width: '100%', display: 'flex', alignItems: 'space-between', mb: 1 }}>
         <Typography variant="h5" sx={{ flex: 1, fontWeight: 700 }}>
-          {`${name} | ${subregionObj.name}`}
+          {`${name} | ${subregionObj!.name}`}
         </Typography>
         <Box>
           <Button
@@ -204,7 +206,7 @@ const Dashboard = () => {
                         <AccessTimeIcon sx={{ fontSize: '16px' }} />
                         <Typography sx={{ fontSize: '10px', paddingLeft: '6px' }}>
                           {/* TODO: remove this check in production */}
-                          Uploaded {d.createdAt ? timeAgo.format(d.createdAt) : '10 days ago'}
+                          Uploaded {d.createdAt ? timeAgo.format(new Date(d.createdAt)) : '10 days ago'}
                         </Typography>
                       </Box>
                     </Box>

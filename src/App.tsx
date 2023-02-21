@@ -6,7 +6,7 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom'
-import { AccountContext, ContractContext } from './contexts'
+import { AccountContext, ContractContext, IContractState } from './contexts'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import {
@@ -41,8 +41,8 @@ const router = createBrowserRouter(
 )
 
 const App = () => {
-  const [account, setAccount] = useState(null)
-  const [contract, setContract] = useState({
+  const [account, setAccount] = useState('')
+  const [contract, setContract] = useState<IContractState>({
     unsignedContract: null,
     signedContract: null,
   })

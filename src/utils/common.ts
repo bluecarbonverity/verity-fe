@@ -39,7 +39,7 @@ export const setupEthereumEventListeners = (ethereum: ethers.providers.ExternalP
     }
   })
 
-  window.ethereum.on('accountsChanged', async accounts => {
+  window.ethereum?.on('accountsChanged', async accounts => {
     window.location.reload()
   })
 
@@ -56,11 +56,12 @@ export const connectWallet = async (): Promise<null | void> => {
 
 export const getCurrentAccount = async () => {
   const { ethereum } = window
+  if (!ethereum) return ''
 
-  const accounts: Array<string> = await ethereum.request({ method: 'eth_accounts' })
+  const accounts: Array<string> = (await ethereum.request({ method: 'eth_accounts' })) as string[]
 
   if (!accounts || accounts?.length === 0) {
-    return null
+    return ''
   }
   const account = accounts[0]
   return account

@@ -12,11 +12,11 @@ const drawerWidth = 300
 const Sidebar = () => {
   const navigate = useNavigate()
   const { region, subregion } = useParams()
-  const [expanded, setExpanded] = useState([region])
-  const [selected, setSelected] = useState<string[]>([subregion])
+  const [expanded, setExpanded] = useState<string[]>(region ? [region] : [])
+  const [selected, setSelected] = useState<string[]>(subregion ? [subregion] : [])
 
   useEffect(() => {
-    setExpanded([region])
+    setExpanded(region ? [region] : [])
   }, [region])
 
   return (
