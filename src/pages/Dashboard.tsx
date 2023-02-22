@@ -54,8 +54,13 @@ const Dashboard = () => {
       const results: Array<IFile> = await Promise.all(
         files.map(async (cid: string) => await requestFile(cid))
       )
+      if (!results) {
+        setFileMetadatas([])
+        setLoading(false)
+        return
+      }
       const metadatas: Array<IFileMetadata> = results
-        .reduce((acc, curr, i) => {
+        .reduce((acc: Array<IFileMetadata>, curr, i) => {
           // filter out errors
           if (curr === undefined) return acc
           // add CID to object (for linking)
