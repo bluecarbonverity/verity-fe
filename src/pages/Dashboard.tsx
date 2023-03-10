@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import {
   Box,
   Typography,
@@ -37,28 +38,25 @@ const Dashboard = () => {
   const navigate = useNavigate()
   const { region, subregion } = useParams()
   const { unsignedContract } = useContract()
-  const [fileMetadatas, setFileMetadatas] = useState<IFileMetadata[]>([])
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
-  const [loading, setLoading] = useState(true)
   const [mrv, setMrv] = useState('all')
 
   const { id, name, subregions } = regions!.find!(d => d.stub === region)!
   const subregionObj = subregions.find(d => d.stub === subregion)
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true)
-      if (!unsignedContract) return
-      const files: Array<string> = await unsignedContract.getTokenFiles(id)
+  const {
+    data: files,
+    isLoading,
+  } = useQuery({
+    enabled: !!unsignedContract,
+    queryKey: ['files', id],
+    queryFn: async () => {
+      const files: Array<string> = await unsignedContract!.getTokenFiles(id)
       const results: Array<IFile> = await Promise.all(
         files.map(async (cid: string) => await requestFile(cid))
       )
-      if (!results) {
-        setFileMetadatas([])
-        setLoading(false)
-        return
-      }
+      if (!results) return []
       const metadatas: Array<IFileMetadata> = results
         .reduce((acc: Array<IFileMetadata>, curr, i) => {
           // filter out errors
@@ -67,15 +65,14 @@ const Dashboard = () => {
           return [...acc, { ...curr, cid: files[i] }]
         }, [])
         .sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
-      setFileMetadatas(metadatas)
-      setLoading(false)
-    }
-    load()
-  }, [unsignedContract, id])
+      return metadatas
+    },
+  })
 
-  const filteredMetadatas = fileMetadatas
-    .filter(d => d.subregion === subregion && (mrv === 'all' || mrv === d.mrv))
-    .filter(d => d.fileName.toLowerCase().includes(search))
+  const filteredMetadatas =
+    (files || [])
+      .filter(d => d.subregion === subregion && (mrv === 'all' || mrv === d.mrv))
+      .filter(d => d.fileName.toLowerCase().includes(search)) || []
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -158,7 +155,7 @@ const Dashboard = () => {
         </Box>
       </Paper>
       <Grid container spacing={2}>
-        {loading
+        {isLoading
           ? [...Array(8).keys()].map(i => <LoadingFileCard key={i} />)
           : filteredMetadatas
               .filter((_, i) => i < page * 8 && i >= (page - 1) * 8)

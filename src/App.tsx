@@ -22,7 +22,11 @@ import MainLayout from './layouts/MainLayout'
 import Dashboard from './pages/Dashboard'
 import AddFile from './pages/AddFile'
 import ViewFile from './pages/ViewFile'
-import Login from './pages/Login'
+import Login from './pages/Auth/Login'
+import SignUp from './pages/Auth/SignUp'
+import ForgotPassword from './pages/Auth/ForgotPassword'
+import ConfirmEmail from './pages/Auth/ConfirmEmail'
+import ResetPassword from './pages/Auth/ResetPassword'
 
 const verityContractAddress = '0x54d8ef369A7733aBbb4F482066C6D3456FB93fB7'
 
@@ -36,6 +40,10 @@ const router = createBrowserRouter(
       </Route>
       <Route path="/files/:id" element={<ViewFile />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/confirm-email" element={<ConfirmEmail />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
     </Route>
   )
 )
