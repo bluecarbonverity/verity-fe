@@ -1,37 +1,30 @@
 import { TextField, Link, Box, Grid, Typography } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
+import useConfirmSignUp from 'api/auth/useConfirmSignUp'
+import useResendConfirmCode from 'api/auth/useResendConfirmCode'
 import AuthLayout from '../../layouts/AuthLayout'
-import { toastSuccessMessage } from '../../utils/toast'
-import { useAuthContext } from '../../contexts/AuthContext'
 import ErrorMessage from '../../components/ErrorMessage'
 
 const ConfirmEmail = () => {
   const navigate = useNavigate()
-  const {
-    username,
-    isLoading,
-    error,
-    confirmSignUp,
-    resendConfirmationCode,
-  } = useAuthContext()
+  const { username } = useParams()
+  const { mutate: confirmSignUp, isSuccess, isLoading, error } = useConfirmSignUp()
+  const { mutate: resendConfirmCode, error: errorRCC } = useResendConfirmCode()
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget as HTMLFormElement)
 
-    const confirmationCode = data.get('confirmationCode')
-    const result = await confirmSignUp!(username, confirmationCode)
-    if (result) {
-      toastSuccessMessage('Account setup complete. You should now be able to login.')
-      navigate('/')
-    }
+    const confirmationCode = data.get('confirmationCode') as string
+
+    await confirmSignUp!({ username: username || '', code: confirmationCode })
+    if (isSuccess) navigate('/')
   }
 
   const handleResendCode = async () => {
-    const res = await resendConfirmationCode!(username)
-    if (res) toastSuccessMessage('Code successfully resent. Please check your email.')
+    await resendConfirmCode!({ username: username || '' })
   }
 
   return (
@@ -60,7 +53,8 @@ const ConfirmEmail = () => {
         >
           Verify
         </LoadingButton>
-        <ErrorMessage>{error!.message}</ErrorMessage>
+        {error instanceof Error && <ErrorMessage>{error!.message!}</ErrorMessage>}
+        {errorRCC instanceof Error && <ErrorMessage>{errorRCC!.message!}</ErrorMessage>}
         <Grid container>
           <Grid item>
             <Typography variant="body2" color="text.secondary" align="center">

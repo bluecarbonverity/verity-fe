@@ -3,13 +3,13 @@ import { TextField, FormControlLabel, Checkbox, Link, Box, Grid } from '@mui/mat
 import { LoadingButton } from '@mui/lab'
 import { useNavigate } from 'react-router-dom'
 
-import { useAuthContext } from '../../contexts/AuthContext'
+import useLogin from 'api/auth/useLogin'
 import AuthLayout from '../../layouts/AuthLayout'
 import ErrorMessage from '../../components/ErrorMessage'
 
 const Login = () => {
   const navigate = useNavigate()
-  const { signIn, error, isLoading } = useAuthContext()
+  const { mutate: signIn, isSuccess, isLoading, error } = useLogin()
   // TODO: actually do something with this value to make remember work
   const [remember, setRemember] = useState(true)
 
@@ -17,13 +17,11 @@ const Login = () => {
     event.preventDefault()
 
     const data = new FormData(event.currentTarget as HTMLFormElement)
-    const username = data.get('username')
-    const password = data.get('password')
+    const username = data.get('username') as string
+    const password = data.get('password') as string
 
-    const result = await signIn!(username, password)
-    localStorage.setItem('idToken', result?.signInUserSession?.idToken?.jwtToken)
-
-    if (result) navigate('/')
+    await signIn!({ username, password })
+    if (isSuccess) navigate('/')
   }
 
   return (
@@ -65,7 +63,7 @@ const Login = () => {
         >
           Sign In
         </LoadingButton>
-        <ErrorMessage>{error!.message}</ErrorMessage>
+        {error instanceof Error && <ErrorMessage>{error!.message!}</ErrorMessage>}
         <Grid container>
           <Grid item xs>
             <Link href="/forgot-password" variant="body2">

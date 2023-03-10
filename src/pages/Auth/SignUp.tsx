@@ -1,8 +1,9 @@
 import { TextField, Link, Box, Grid } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { FieldValues, useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 
-import { useAuthContext } from '../../contexts/AuthContext'
+import useSignUp from 'api/auth/useSignUp'
 import AuthLayout from '../../layouts/AuthLayout'
 import ErrorMessage from '../../components/ErrorMessage'
 
@@ -13,10 +14,12 @@ const SignUp = () => {
     watch,
     formState: { errors },
   } = useForm()
-  const { signUp, error, isLoading } = useAuthContext()
+  const navigate = useNavigate()
+  const { mutate: signUp, isSuccess, isLoading, error } = useSignUp()
 
   const onSubmit = async ({ email, password }: FieldValues) => {
     await signUp!(email, password)
+    if (isSuccess) navigate('/')
   }
   const password = watch('password', '')
 
@@ -133,7 +136,7 @@ const SignUp = () => {
         >
           Sign Up
         </LoadingButton>
-        <ErrorMessage>{error!.message}</ErrorMessage>
+        {error instanceof Error && <ErrorMessage>{error!.message!}</ErrorMessage>}
         <Grid container justifyContent="flex-end">
           <Grid item>
             <Link href="/login" variant="body2">

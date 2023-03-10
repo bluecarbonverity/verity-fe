@@ -1,11 +1,11 @@
 import { TextField, Link, Box, Grid, Typography } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { FieldValues, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
+import useForgotPasswordSubmit from 'api/auth/useForgotPasswordSubmit'
+import useResendConfirmCode from 'api/auth/useResendConfirmCode'
 import AuthLayout from '../../layouts/AuthLayout'
-import { toastSuccessMessage } from '../../utils/toast'
-import { useAuthContext } from '../../contexts/AuthContext'
 import ErrorMessage from '../../components/ErrorMessage'
 
 const ResetPassword = () => {
@@ -15,21 +15,19 @@ const ResetPassword = () => {
     watch,
     formState: { errors },
   } = useForm()
-  const { submitNewPassword, resendConfirmationCode, error, isLoading, username } = useAuthContext()
   const navigate = useNavigate()
+  const { username } = useParams()
+  const { mutate: forgotPasswordSubmit, isSuccess, isLoading, error } = useForgotPasswordSubmit()
+  const { mutate: resendConfirmCode, error: errorRCC } = useResendConfirmCode()
 
   const password = watch('password', '')
   const onSubmit = async ({ code, password }: FieldValues) => {
-    const path = await submitNewPassword!(username, code, password)
-    if (path) {
-      toastSuccessMessage('Password successfully reset. You should now be able to login.')
-      navigate(path)
-    }
+    await forgotPasswordSubmit!({ username: username || '', code, password })
+    if (isSuccess) navigate('/')
   }
 
   const handleResendCode = async () => {
-    const res = await resendConfirmationCode!(username)
-    if (res) toastSuccessMessage('Code successfully resent. Please check your email.')
+    await resendConfirmCode!({ username: username || '' })
   }
 
   return (
@@ -144,7 +142,8 @@ const ResetPassword = () => {
         >
           Change Password
         </LoadingButton>
-        <ErrorMessage>{error!.message}</ErrorMessage>
+        {error instanceof Error && <ErrorMessage>{error!.message!}</ErrorMessage>}
+        {errorRCC instanceof Error && <ErrorMessage>{errorRCC!.message!}</ErrorMessage>}{' '}
         <Grid container>
           <Grid item>
             <Typography variant="body2" color="text.secondary" align="center">

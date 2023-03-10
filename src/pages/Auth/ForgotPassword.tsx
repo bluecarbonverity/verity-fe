@@ -1,25 +1,24 @@
 import { TextField, Link, Box, Grid } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { FieldValues, useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 
+import useForgotPassword from 'api/auth/useForgotPassword'
 import AuthLayout from '../../layouts/AuthLayout'
-import { toastSuccessMessage } from '../../utils/toast'
-import { useAuthContext } from '../../contexts/AuthContext'
 import ErrorMessage from '../../components/ErrorMessage'
 
 const ForgotPassword = () => {
-  const { isLoading, error, forgotPassword } = useAuthContext()
+  const navigate = useNavigate()
+  const { mutate: forgotPassword, isSuccess, isLoading, error } = useForgotPassword()
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm()
 
-  const onSubmit = async ({ email }: FieldValues) => {
-    const result = await forgotPassword!(email)
-    if (result) {
-      toastSuccessMessage('Confirmation code successfully sent.')
-    }
+  const onSubmit = async ({ email: username }: FieldValues) => {
+    await forgotPassword!({ username })
+    if (isSuccess) navigate('/reset-password')
   }
 
   return (
@@ -57,7 +56,7 @@ const ForgotPassword = () => {
         >
           Request Reset Link
         </LoadingButton>
-        <ErrorMessage>{error!.message}</ErrorMessage>
+        {error instanceof Error && <ErrorMessage>{error!.message!}</ErrorMessage>}
         <Grid container justifyContent="flex-end">
           <Grid item>
             <Link href="/login" variant="body2">

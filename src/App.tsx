@@ -5,10 +5,8 @@ import {
   createRoutesFromElements,
   Route,
   Navigate,
-  Outlet,
 } from 'react-router-dom'
 import { AccountContext, ContractContext, IContractState } from './contexts'
-import { AuthContextProvider } from './contexts/AuthContext'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import {
@@ -32,28 +30,20 @@ import ResetPassword from './pages/Auth/ResetPassword'
 
 const verityContractAddress = '0x54d8ef369A7733aBbb4F482066C6D3456FB93fB7'
 
-const AuthLayout = () => (
-  <AuthContextProvider>
-    <Outlet />
-  </AuthContextProvider>
-)
-
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" errorElement={<Error />}>
-      <Route element={<AuthLayout />}>
-        <Route element={<MainLayout />}>
-          <Route index element={<Navigate to="/projects/goc-north/koolatong-north" replace />} />
-          <Route path="/projects/:region/:subregion" element={<Dashboard />} />
-          <Route path="/projects/:region/:subregion/files/create" element={<AddFile />} />
-        </Route>
-        <Route path="/files/:id" element={<ViewFile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/confirm-email" element={<ConfirmEmail />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+      <Route element={<MainLayout />}>
+        <Route index element={<Navigate to="/projects/goc-north/koolatong-north" replace />} />
+        <Route path="/projects/:region/:subregion" element={<Dashboard />} />
+        <Route path="/projects/:region/:subregion/files/create" element={<AddFile />} />
       </Route>
+      <Route path="/files/:id" element={<ViewFile />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/confirm-email" element={<ConfirmEmail />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
     </Route>
   )
 )
